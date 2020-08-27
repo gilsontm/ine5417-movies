@@ -1,12 +1,7 @@
-import base64
-import requests
-import PIL.Image
-import PIL.ImageTk
-from io import BytesIO
 from tkinter import *
 from tkinter.ttk import *
 from utils import apis
-
+from utils import image_tools
 
 class Main(Frame):
     def __init__(self, root):
@@ -58,25 +53,24 @@ class Main(Frame):
         query = self.search_input.get()
         if query:
             search = self.tmdb_api.Search()
-            promise = search.movie(query=query)
-
+            promise = search.multi(query=query)
             for result in search.results:
-                try:
-                    url = f"https://image.tmdb.org/t/p/w185{result['poster_path']}"
-                    response = requests.get(url)
-                    data = BytesIO(response.content)
-                    image = PIL.Image.open(data)
-                    photo = PIL.ImageTk.PhotoImage(image)
-                except Exception as ex:
-                    print(ex)
-                    continue
+                if result["media_type"] == "movie":
+                    path = result["poster_path"]
+                    name = result["title"]
+                if result["media_type"] == "tv":
+                    path = result["poster_path"]
+                    name = result["original_name"]
+                if result["media_type"] == "person":
+                    path = result["profile_path"]
+                    name = result["name"]
+                photo = image_tools.get_image_or_default(path)
                 row = 2 * (len(self.images) // 4); column = len(self.images) % 4
                 self.images.append(photo)
                 poster = Label(self.image_container, image=photo)
                 poster.grid(row=row, column=column, padx=0, pady=10)
-                title = Label(self.image_container, text=result["title"], wraplength=185, justify=CENTER)
+                title = Label(self.image_container, text=name, wraplength=185, justify=CENTER)
                 title.grid(row=row+1, column=column)
-
         if len(self.images) == 0:
             label = Label(self.image_container, text="Nenhum resultado encontrado.", justify=CENTER)
             label.pack(side=TOP)
