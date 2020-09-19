@@ -13,8 +13,22 @@ class User(connection.BaseModel):
 
 def get_by_id(id):
     try:
-        return User.select().where(User.id == id).get()
+        return User.get_by_id(id)
     except User.DoesNotExist:
         return None
+    except Exception as ex:
+        raise ex
+
+def get_by_username(username):
+    try:
+        return User.select().where(User.username == username).get()
+    except User.DoesNotExist:
+        return None
+    except Exception as ex:
+        raise ex
+
+def register(user):
+    try:
+        return User.insert(**user).execute()
     except Exception as ex:
         raise ex

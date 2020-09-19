@@ -12,6 +12,12 @@ class LoginHandler(tornado.web.RequestHandler):
         pass
 
     def post(self):
+        if "/login" in self.request.uri:
+            self.login()
+        if "/register" in self.request.uri:
+            self.register()
+
+    def login(self):
         try:
             request = json.loads(self.request.body)
             user_controller = UserController()
@@ -21,6 +27,16 @@ class LoginHandler(tornado.web.RequestHandler):
                 self.set_status(200)
             else:
                 self.set_status(401)
+        except Exception as ex:
+            print(ex)
+            self.set_status(500)
+
+    def register(self):
+        try:
+            user = json.loads(self.request.body)
+            user_controller = UserController()
+            success = user_controller.register(user)
+            self.set_status(200 if success else 401)
         except Exception as ex:
             print(ex)
             self.set_status(500)

@@ -7,6 +7,7 @@ from handlers.login_handler import LoginHandler
 def make_app():
     return tornado.web.Application([
         (r"/login", LoginHandler),
+        (r"/register", LoginHandler),
     ])
 
 def main():

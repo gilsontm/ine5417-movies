@@ -26,3 +26,4 @@ traitlets==4.3.3
 tweepy==3.9.0
 urllib3==1.25.10
 wcwidth==0.2.5
+bcrypt==3.2.0
