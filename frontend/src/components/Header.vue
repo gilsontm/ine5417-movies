@@ -35,7 +35,7 @@ export default {
         return { }
     },
     beforeCreate() {
-        // if (!this.$session.exists()) this.$router.push('/login');
+        if (!this.$session.exists()) this.$router.push('/login');
     },
     methods: {
         toHome() {
