@@ -107,8 +107,12 @@ export default {
             this.people = [];
         },
         showResult(result) {
-            console.log(result);
-            // TO IMPLEMENT
+            if (result.media_type === 'movie')
+                this.$router.push(`/movie/${result.id}`);
+            else if (result.media_type === 'tv')
+                this.$router.push(`/tv/${result.id}`);
+            else
+                this.$router.push(`/person/${result.id}`);
         }
     }
 }

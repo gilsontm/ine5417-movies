@@ -19,5 +19,20 @@ export default new Router({
             path: '*',
             redirect: '/login',
         },
+        {
+            path: '/movie/:id',
+            name: 'movie',
+            component: require('@/components/Movie').default,
+        },
+        {
+            path: '/tv/:id',
+            name: 'tv',
+            component: require('@/components/Tv').default,
+        },
+        {
+            path: '/person/:id',
+            name: 'person',
+            component: require('@/components/Person').default,
+        },
     ],
 });
