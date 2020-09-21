@@ -16,23 +16,14 @@ export default new Router({
             component: require('@/components/Home').default,
         },
         {
+            path: '/information',
+            name: 'information',
+            component: require('@/components/Information').default,
+            props: true,
+        },
+        {
             path: '*',
             redirect: '/login',
-        },
-        {
-            path: '/movie/:id',
-            name: 'movie',
-            component: require('@/components/Movie').default,
-        },
-        {
-            path: '/tv/:id',
-            name: 'tv',
-            component: require('@/components/Tv').default,
-        },
-        {
-            path: '/person/:id',
-            name: 'person',
-            component: require('@/components/Person').default,
         },
     ],
 });

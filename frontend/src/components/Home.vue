@@ -107,12 +107,12 @@ export default {
             this.people = [];
         },
         showResult(result) {
-            if (result.media_type === 'movie')
-                this.$router.push(`/movie/${result.id}`);
-            else if (result.media_type === 'tv')
-                this.$router.push(`/tv/${result.id}`);
-            else
-                this.$router.push(`/person/${result.id}`);
+            this.$router.push({
+                name: 'information',
+                params: {
+                    'model': result,
+                }
+            });
         }
     }
 }
