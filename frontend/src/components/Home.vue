@@ -1,86 +1,70 @@
 <template>
     <div>
-        <menuHeader :isHome="true"> </menuHeader>
+        <menu-header title="" :isHome="true" :isUser="false"> </menu-header>
         <b-row class="center mt-2 mx-0">
-            <b-col cols="6" offset="2" class="px-1">
+            <b-col cols="4" offset="3" class="px-1">
                 <b-form-input type="text" v-model="query"> </b-form-input>
             </b-col>
             <b-col cols="2" class="px-1">
-                <b-button variant="success" class="btn btn-block" @click="search"> Pesquisar </b-button>
+                <b-button variant="dark" class="w-75" block @click="search"> Pesquisar </b-button>
             </b-col>
         </b-row>
-        <b-container v-if="searched">
-            <div class="my-2 horizontal-scroll">
-                <h4> Filmes </h4>
-                <hr/>
-                <template v-for="result in movies">
-                    <b-link
-                        :key="result.id"
-                        @click="showResult(result)"
-                        class="d-inline-block bg-light px-3 pt-3 mx-1 text-center">
-                        <img class="poster" :src="result.poster_path ? (url + result.poster_path) : unavailable">
-                        <p class="text-truncate" style="max-width: 185px;"> {{ result.title }} </p>
-                    </b-link>
-                </template>
-                <p v-if="movies.length === 0"> Nenhum resultado encontrado. </p>
+        <template v-if="searched"> 
+            <b-container v-if="loaded">
+                <horizontal-scroll
+                    class="my-2"
+                    v-on:clicked="showResult"
+                    title="Filmes" 
+                    :results="movies">
+                </horizontal-scroll>
+                <horizontal-scroll
+                    class="my-2"
+                    v-on:clicked="showResult"
+                    title="Programas de TV"
+                    :results="series">
+                </horizontal-scroll>
+                <horizontal-scroll
+                    class="my-2"
+                    v-on:clicked="showResult"
+                    title="Pessoas"
+                    :results="people">
+                </horizontal-scroll>
+            </b-container>
+            <div v-else class="d-flex justify-content-center mt-5">
+                <b-spinner></b-spinner>
             </div>
-            <div class="my-2 horizontal-scroll">
-                <h4> TV </h4>
-                <hr/>
-                <template v-for="result in series">
-                    <b-link
-                        :key="result.id"
-                        @click="showResult(result)"
-                        class="d-inline-block bg-light px-3 pt-3 mx-1 text-center">
-                        <img class="poster" :src="result.poster_path ? (url + result.poster_path) : unavailable">
-                        <p class="text-truncate" style="max-width: 185px;"> {{ result.name }} </p>
-                    </b-link>
-                </template>
-                <p v-if="series.length === 0"> Nenhum resultado encontrado. </p>
-            </div>
-            <div class="my-2 horizontal-scroll">
-                <h4> Pessoas </h4>
-                <hr/>
-                <template v-for="result in people">
-                    <b-link
-                        :key="result.id"
-                        @click="showResult(result)"
-                        class="d-inline-block bg-light px-3 pt-3 mx-1 text-center">
-                        <img class="poster" :src="result.profile_path ? (url + result.profile_path) : unavailable">
-                        <p class="text-truncate" style="max-width: 185px;"> {{ result.name }} </p>
-                    </b-link>
-                </template>
-                <p v-if="people.length === 0"> Nenhum resultado encontrado. </p>
-            </div>
-        </b-container>
+        </template>
     </div>
 </template>
 
 <script>
 import axios from 'axios'
-import menuHeader from './Header.vue'
+import menuHeader from './shared/Header.vue'
+import horizontalScroll from './shared/HorizontalScroll.vue'
 
 export default {
     name: 'home',
     components: {
         menuHeader,
+        horizontalScroll,
     },
     data() {
         return {
-            url: 'https://image.tmdb.org/t/p/w185',
-            unavailable: require('../assets/default_w185.jpg'),
             query: '',
             movies: [],
             series: [],
             people: [],
             searched: false,
+            loaded: false,
         }
     },
     methods: {
         search() {
             this.searched = true;
+            this.loaded = false;
             if (!this.query) {
                 this.clear();
+                this.loaded = true;
                 return;
             }
             axios.get(this.backend + '/search', {
@@ -97,9 +81,8 @@ export default {
                     else
                         this.people.push(result);
                 });
-            }).catch(err => {
-                console.log(err);
-            })
+                this.loaded = true;
+            }).catch(err => console.log(err));
         },
         clear() {
             this.movies = [];
@@ -110,7 +93,7 @@ export default {
             this.$router.push({
                 name: 'information',
                 params: {
-                    'model': result,
+                    'model_prop': result,
                 }
             });
         }
@@ -119,20 +102,5 @@ export default {
 </script>
 
 <style scoped>
-
-.horizontal-scroll {
-    overflow-x: auto;
-    white-space: nowrap;
-}
-.horizontal-scroll > .d-inline-block {
-    float: none;
-}
-
-.poster {
-    width: 185px;
-    max-height: 278px;
-    object-fit: none;
-    object-position: center;
-}
 
 </style>

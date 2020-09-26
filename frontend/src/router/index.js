@@ -22,6 +22,11 @@ export default new Router({
             props: true,
         },
         {
+            path: '/user',
+            name: 'user',
+            component: require('@/components/User').default,
+        },
+        {
             path: '*',
             redirect: '/login',
         },

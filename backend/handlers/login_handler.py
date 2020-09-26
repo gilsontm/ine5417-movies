@@ -14,7 +14,7 @@ class LoginHandler(tornado.web.RequestHandler):
     def post(self):
         if "/login" in self.request.uri:
             self.login()
-        if "/register" in self.request.uri:
+        elif "/register" in self.request.uri:
             self.register()
 
     def login(self):

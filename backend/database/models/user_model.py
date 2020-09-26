@@ -3,7 +3,6 @@ from database import connection
 
 
 class User(connection.BaseModel):
-    name = TextField()
     email = TextField()
     username = TextField()
     password = TextField()
@@ -28,7 +27,4 @@ def get_by_username(username):
         raise ex
 
 def register(user):
-    try:
-        return User.insert(**user).execute()
-    except Exception as ex:
-        raise ex
+    return User.insert(**user).execute()

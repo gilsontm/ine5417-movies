@@ -3,6 +3,7 @@ import tornado.web
 from database.connection import setup_database
 from handlers.login_handler import LoginHandler
 from handlers.search_handler import SearchHandler
+from handlers.user_handler import UserHandler
 
 
 def make_app():
@@ -10,6 +11,8 @@ def make_app():
         (r"/login", LoginHandler),
         (r"/register", LoginHandler),
         (r"/search", SearchHandler),
+        (r"/info", SearchHandler),
+        (r"/favorite", UserHandler)
     ])
 
 def main():

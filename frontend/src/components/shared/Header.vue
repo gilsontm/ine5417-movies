@@ -4,24 +4,21 @@
             <b-navbar-brand>
                 <b-button
                     v-if="!isHome"
-                    variant="dark"
+                    variant="outline-dark"
                     class="mx-1"
-                    size="sm"
                     @click="toHome">
-                    Home
+                    Voltar
                 </b-button>
             </b-navbar-brand>
             <b-navbar-brand v-if="title" class="ml-auto">
                 {{ title }}
             </b-navbar-brand>
             <b-navbar-nav class="ml-auto">
-                <b-button
-                    variant="danger"
-                    class="ml-1"
-                    size="sm"
-                    @click="logout">
-                    Sair
-                </b-button>
+                <b-dropdown :text="`Olá, ${username}!`" right class="m-2" variant="outline-dark">
+                    <b-dropdown-item @click="toUser" :disabled="isUser">Ver favoritos</b-dropdown-item>
+                    <b-dropdown-divider></b-dropdown-divider>
+                    <b-dropdown-item @click="logout" variant="danger">Sair</b-dropdown-item>
+                </b-dropdown>
             </b-navbar-nav>
         </b-navbar>
     </div>
@@ -29,17 +26,26 @@
 
 <script>
 export default {
-    name: 'menuHeader',
-    props: ['title', 'isHome'],
+    name: 'menu-header',
+    props: ['title', 'isHome', 'isUser'],
     data() {
-        return { }
+        return {
+            username: '',
+        }
     },
     beforeCreate() {
-        if (!this.$session.exists()) this.$router.push('/login');
+        if (!this.$session.exists())
+            this.$router.push('/login');
+    },
+    mounted() {
+        this.username = this.$session.get("user_username");
     },
     methods: {
         toHome() {
             this.$router.push('/home');
+        },
+        toUser() {
+            this.$router.push('/user');
         },
         logout() {
             this.$session.destroy();

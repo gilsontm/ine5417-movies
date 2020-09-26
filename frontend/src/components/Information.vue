@@ -1,120 +1,197 @@
 <template>
     <div>
-        <menuHeader :title="'Informação'" :isHome="false"> </menuHeader>
+        <menu-header :title="$utils.title(model)" :isHome="false" :isUser="false"> </menu-header>
+        <template v-if="loaded">
+            <div :class="backdrop ? 'backdrop' : ''" :style="backdrop">
+                <b-container class="bg-light pt-4">
+                    <b-row class="no-gutters">
+                        <b-col cols="2" class="text-center">
+                            <img :src="$utils.poster(model)" class="w-100">
+                            <b-button class="mt-3" block variant="dark" @click="setFavorite"> {{ is_favorite ? "Desfavoritar" : "Favoritar" }} </b-button>
+                        </b-col>
+                        <b-col cols="10" class="text-justify px-5">
+                            <h4><b>{{$utils.title(model)}}</b></h4>
+                            <hr>
+                            <template v-if="model.media_type === 'movie'">
+                                <p><b>Título original:</b> {{info.original_title || 'indisponível'}}</p>
+                                <p><b>Resumo:</b> {{info.overview || 'indisponível'}}</p>
+                                <p><b>Duração:</b> {{info.runtime || 'indisponível'}}</p>
+                                <p><b>Gêneros:</b> {{info.genres.map(e => e.name).join(', ') || 'indisponível'}}</p>
+                                <p><b>Idiomas:</b> {{info.spoken_languages.map(e => ISO6391.getNativeName(e.iso_639_1)).join(', ') || 'indisponível'}}</p>
+                                <p><b>Idioma original:</b> {{ISO6391.getNativeName(info.original_language) || 'indisponível'}}</p>
+                                <p><b>Data de estreia:</b> {{info.release_date || 'indisponível'}}</p>
+                                <p><b>Popularidade:</b> {{info.popularity || 'indisponível'}}</p>
+                                <p><b>Orçamento:</b> {{info.budget || 'indisponível'}}</p>
+                                <p><b>Bilheteria:</b> {{info.revenue || 'indisponível'}}</p>
+                                <p><b>Status:</b> {{info.status || 'indisponível'}}</p>
+                                <p><b>Tagline:</b> {{info.tagline || 'indisponível'}}</p>
+                                <p><b>Média de votos:</b> {{info.vote_average || 'indisponível'}}</p>
+                                <p><b>Número de votos:</b> {{info.vote_count || 'indisponível'}}</p>
+                            </template>
 
-        <!-- MOVIE -->
-        <template v-if="model.media_type === 'movie'">
-            <b-row>
-                <b-col>
-                    <img class="poster" :src="model.poster_path ? (url + model.poster_path) : unavailable">
-                </b-col>
-                <b-col cols="10">
-                    <h1 style="max-width: 500px">{{model.title}}</h1>
-                    <hr>
-                    <p>Resumo: {{model.overview}}</p>
-                    <p>Título original: {{model.original_title}}</p>
-                    <p>Lingua original: {{model.original_language}}</p>
-                    <p>Popularidade: {{model.popularity}}</p>
-                    <!-- <p>Tempo de duração: {{model.runtime}}</p> -->
-                    <!-- <p>: {{model.spoken_languages.names}}</p> -->
-                    <p>Data de lançamento: {{model.release_date}}</p>
-                    <!-- <p>Status: {{model.status}}</p> -->
-                    <!-- <p>: {{model.production_companies}}</p> -->
-                    <!-- <p>: {{model.production_countries}}</p> -->
-                    <!-- <p>: {{model.revenue}}</p> -->
-                    <!-- <p>: {{model.runtime}}</p> -->
-                    <!-- <p>Tagline: {{model.tagline}}</p> -->
-                    <p>Média de votos: {{model.vote_average}}</p>
-                    <p>Quantidade de votos: {{model.vote_count}}</p>
-                    <!-- <p>Generos: {{model.genres}}</p> -->
-                </b-col>
-            </b-row>
+                            <!-- TV -->
+                            <template v-else-if="model.media_type === 'tv'">
+                                <p><b>Nome original:</b> {{info.original_name || 'indisponível'}}</p>
+                                <p><b>Resumo:</b> {{info.overview || 'indisponível'}}</p>
+                                <p><b>Criado por:</b> {{info.created_by.map(e => e.name).join(', ') || 'indisponível'}}</p>
+                                <p><b>Duração dos episódios:</b> {{info.episode_run_time[0] || 'indisponível'}}</p>
+                                <p><b>Gêneros:</b> {{info.genres.map(e => e.name).join(', ') || 'indisponível'}}</p>
+                                <p><b>Idiomas:</b> {{info.languages.map(e => ISO6391.getNativeName(e)).join(', ') || 'indisponível'}}</p>
+                                <p><b>Idioma original:</b> {{ISO6391.getNativeName(info.original_language) || 'indisponível'}}</p>
+                                <p><b>Estreou em:</b> {{info.first_air_date || 'indisponível'}}</p>
+                                <p><b>Último episódio em:</b> {{info.last_air_date || 'indisponível'}}</p>
+                                <p><b>Próximo episódio em:</b> {{info.next_episode_to_air ? info.next_episode_to_air.air_date : 'indisponível'}}</p>
+                                <p><b>Emissora:</b> {{info.networks.map(e => e.name).join(', ') || 'indisponível'}}</p>
+                                <p><b>Número de episódios:</b> {{info.number_of_episodes || 'indisponível'}}</p>
+                                <p><b>Número de temporadas:</b> {{info.number_of_seasons || 'indisponível'}}</p>
+                                <p><b>País de origem:</b> {{info.origin_country.join(', ') || 'indisponível'}}</p>
+                                <p><b>Popularidade:</b> {{info.popularity || 'indisponível'}}</p>
+                                <p><b>Status:</b> {{info.status || 'indisponível'}}</p>
+                                <p><b>Tipo:</b> {{info.type || 'indisponível'}}</p>
+                                <p><b>Média de votos:</b> {{info.vote_average || 'indisponível'}}</p>
+                                <p><b>Número de votos:</b> {{info.vote_count || 'indisponível'}}</p>
+
+                                <div class="accordion">
+                                    <div v-for="season in info.seasons" :key="season.id">
+                                        <b-button block v-b-toggle="''+season.id" variant="outline-dark" class="my-1"> {{ season.name }}</b-button>
+                                        <b-collapse :id="''+season.id" accordion="seasons" class="text-justify">
+                                            <b-row class="my-3">
+                                                <b-col cols="3" class="text-center">
+                                                    <img :src="$utils.season_poster(season)" class="w-100 px-2">
+                                                </b-col>
+                                                <b-col cols="9">
+                                                    <p><b>Número de episódios:</b> {{season.episode_count || 'indisponível'}}</p>
+                                                    <p><b>Data de estreia:</b> {{season.air_date || 'indisponível'}}</p>
+                                                    <p><b>Resumo:</b> {{season.overview || 'indisponível'}}</p>
+                                                </b-col>
+                                            </b-row>
+                                        </b-collapse>
+                                    </div>
+                                </div>
+                            </template>
+
+                            <!-- PERSON -->
+                            <template v-else-if="model.media_type === 'person'">
+                                <p><b>Biografia:</b> {{info.biography || 'indisponível'}}</p>
+                                <p><b>Conhecido(a) por:</b> {{info.known_for_department || 'indisponível'}}</p>
+                                <p><b>Local de nascimento:</b> {{info.place_of_birth || 'indisponível'}}</p>
+                                <p><b>Data de nascimento:</b> {{info.birthday || 'indisponível'}}</p>
+                                <p><b>Data de falecimento:</b> {{info.deathday || 'indisponível'}}</p>
+                                <p><b>Gênero:</b> {{info.gender === 1 ? 'Feminino' : (info.gender === 2 ? 'Masculino' : 'Não especificado')}}</p>
+                                <p><b>Popularidade:</b> {{info.popularity || 'indisponível'}}</p>
+                                <p><b>Também conhecido(a) como:</b> {{info.also_known_as.join(', ') || 'indisponível'}}</p>
+                            </template>
+                        </b-col>
+                    </b-row>
+                    <horizontal-scroll
+                        class="my-5"
+                        v-on:clicked="showResult"
+                        title="Relacionados"
+                        :results="related">
+                    </horizontal-scroll>
+                </b-container>
+            </div>
         </template>
-
-        <!-- TV -->
-        <template v-else-if="model.media_type === 'tv'">
-            <b-row>
-                <b-col>
-                    <img class="poster" :src="model.poster_path ? (url + model.poster_path) : unavailable">
-                </b-col>
-                <b-col cols="10">
-                <h1 style="max-width: 500px">{{model.name}}</h1>
-                <hr>
-                <p>Resumo: {{model.overview}}</p>
-                <!-- <p>Criada por: {{model.created_by}}</p> -->
-                <!-- <p>: {{model.credit_id}}</p> -->
-                <!-- <p>Tempo de duração de um episodio: {{model.episode_run_time}}</p> -->
-                <p>Estreou em: {{model.first_air_date}}</p>
-                <!-- <p>Generos: {{model.genres}}</p> -->
-                <!-- <p>Em produção: {{model.in_production}}</p>
-                <p>Linguas: {{model.languages}}</p> -->
-                <!-- <p>Lançado por último em: {{model.last_air_date}}</p> -->
-                <!-- <p>: {{model.networks}}</p> -->
-                <p>Número de episodios: {{model.number_of_episodes}}</p>
-                <p>Número de temporadas: {{model.number_of_seasons}}</p>
-                <p>País de origem: {{model.origin_country}}</p>
-                <p>Popularidade: {{model.popularity}}</p>
-                <!-- <p>produção: {{model.production_companies}}</p> -->
-                <!-- <p>: {{model.seasons}}</p> -->
-                <!-- <p>: {{model.status}}</p> -->
-                <p>Média de votos: {{model.vote_average}}</p>
-                <p>Quantidade de votos: {{model.vote_count}}</p>
-                </b-col>
-            </b-row>
-        </template>
-
-        <!-- PERSON -->
-        <template v-else-if="model.media_type === 'person'">
-            <b-row>
-                <b-col>
-                    <img class="poster" :src="model.profile_path ? (url + model.profile_path) : unavailable">
-                </b-col>
-                <b-col cols="10">
-                <h1 style="max-width: 500px">{{model.name}}</h1>
-                <hr>
-                <p>Data de nascimento: {{model.birthday}}</p>
-                <p>Conhecido(a) por: {{model.known_for_department}}</p>
-                <p>Dia de falecimento: {{model.deathday}}</p>
-                <p>Também conhecido(a) como: {{model.also_known_as}}</p>
-                <p>Biografia: {{model.biography}}</p>
-                <p>Lugar de nascimento: {{model.place_of_birth}}</p>
-                </b-col>
-            </b-row>
+        <template v-else> 
+            <div class="d-flex justify-content-center mt-5">
+                <b-spinner></b-spinner>
+            </div>
         </template>
     </div>
 </template>
 
 <script>
-import menuHeader from './Header.vue'
+import axios from 'axios'
+import ISO6391 from 'iso-639-1'
+import menuHeader from './shared/Header.vue'
+import horizontalScroll from './shared/HorizontalScroll.vue'
 
 export default {
-    props: ['model'],
+    props: ['model_prop'],
     components: {
         menuHeader,
+        horizontalScroll,
+    },
+    computed: {
+        backdrop() {
+            if (this.model.backdrop_path)
+                return `background-image: url(${this.$utils.backdrop(this.model)})`;
+            return '';
+        }
     },
     data() {
         return {
-            test: null,
-            url: 'https://image.tmdb.org/t/p/w185',
-            unavailable: require('../assets/default_w185.jpg'),
+            loaded: false,
+            model: {
+                media_type: '',
+                poster_path: '',
+                profile_path: '',
+                backdrop_path: '',
+            },
+            info: null,
+            related: [],
+            is_favorite: false,
+            ISO6391: ISO6391,
         }
     },
     mounted() {
-        if (!this.model) this.$router.push('/home');
+        if (!this.model_prop)
+            this.$router.push('/home');
+        else {
+            this.model = this.model_prop;
+            this.refresh();
+        }
     },
     methods: {
-
+        refresh() {
+            this.loaded = false;
+            this.user_id = this.$session.get("user_id");
+            axios.get(this.backend + "/info", {
+                params: {
+                    user_id: this.user_id,
+                    entity: this.model,
+                }
+            }).then(res => {
+                console.log(res);
+                this.info = res.data.info;
+                this.related = res.data.related;
+                this.is_favorite = res.data.is_favorite;
+                this.loaded = true;
+            }).catch(err => console.log(err));
+        },
+        setFavorite() {
+            this.user_id = this.$session.get("user_id");
+            axios.put(this.backend + "/favorite", {
+                user_id: this.user_id,
+                entity: this.model,
+                favorite: !this.is_favorite,
+            }).then(res => {
+                if (res.status === 200)
+                    this.is_favorite = !this.is_favorite;
+            }).catch(err => console.log(err));
+        },
+        showResult(result) {
+            this.loaded = false;
+            if (!result.media_type)
+                result.media_type = this.model.media_type;
+            this.model = result;
+            this.refresh();
+        }
     },
 }
 </script>
 
 <style scoped>
+.backdrop {
+    background-position: center top;
+    background-repeat: no-repeat;
+    background-size: 100%;
+    padding-top: 10%;
+
+}
+
 .poster {
-    /* width: 185px;
-    max-height: 278px; */
-    width: 266px;
-    max-height: 400px;
-    object-fit: none;
-    object-position: center;
+    width: 185px;
+    max-height: 278px;
 }
 </style>
