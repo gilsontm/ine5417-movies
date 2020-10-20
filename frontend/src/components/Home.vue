@@ -5,7 +5,7 @@
             <b-col cols="4" offset="3" class="px-1">
                 <b-form-input list="history" type="text" v-model="query" autocomplete="off"> </b-form-input>
                 <datalist id="history">
-                    <option v-for="recent of history">{{ recent }}</option>
+                    <option v-for="recent of history" :key="recent.id">{{ recent }}</option>
                 </datalist>
             </b-col>
             <b-col cols="2" class="px-1">
@@ -59,10 +59,17 @@ export default {
             people: [],
             searched: false,
             loaded: false,
-            history: this.loadHistory()
+            history: [],
         }
     },
+    mounted() {
+        this.refresh();
+    },
     methods: {
+        refresh() {
+            this.user_id = this.$session.get("user_id");
+            this.loadHistory();
+        },
         search() {
             this.searched = true;
             this.loaded = false;
@@ -87,6 +94,7 @@ export default {
                     else
                         this.people.push(result);
                 });
+                this.refresh();
                 this.loaded = true;
             }).catch(err => console.log(err));
         },
@@ -104,15 +112,13 @@ export default {
             });
         },
         loadHistory() {
-            this.user_id = this.$session.get("user_id");
             axios.get(this.backend + '/history', {
                 params: {
                     user_id: this.user_id,
                 },
             }).then(res => {
-                this.clear();
-                return res.data.results;
-                this.loaded = true;
+                if (res.data)
+                    this.history = res.data.results;
             }).catch(err => console.log(err));
         }
     }
