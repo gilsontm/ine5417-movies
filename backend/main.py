@@ -12,7 +12,8 @@ def make_app():
         (r"/register", LoginHandler),
         (r"/search", SearchHandler),
         (r"/info", SearchHandler),
-        (r"/favorite", UserHandler)
+        (r"/favorite", UserHandler),
+        (r"/history",SearchHandler)
     ])
 
 def main():

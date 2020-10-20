@@ -23,3 +23,10 @@ CREATE TABLE IF NOT EXISTS favorite (
     FOREIGN KEY (user_id) REFERENCES user(id),
     FOREIGN KEY (entity_id) REFERENCES entity(id)
 );
+
+CREATE TABLE IF NOT EXISTS history (
+    id integer PRIMARY KEY,
+    title text NOT NULL,
+    user_id integer NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES user(id)
+);

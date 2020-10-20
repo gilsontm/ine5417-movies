@@ -3,18 +3,21 @@
         <menu-header title="" :isHome="true" :isUser="false"> </menu-header>
         <b-row class="center mt-2 mx-0">
             <b-col cols="4" offset="3" class="px-1">
-                <b-form-input type="text" v-model="query"> </b-form-input>
+                <b-form-input list="history" type="text" v-model="query" autocomplete="off"> </b-form-input>
+                <datalist id="history">
+                    <option v-for="recent of history">{{ recent }}</option>
+                </datalist>
             </b-col>
             <b-col cols="2" class="px-1">
                 <b-button variant="dark" class="w-75" block @click="search"> Pesquisar </b-button>
             </b-col>
         </b-row>
-        <template v-if="searched"> 
+        <template v-if="searched">
             <b-container v-if="loaded">
                 <horizontal-scroll
                     class="my-2"
                     v-on:clicked="showResult"
-                    title="Filmes" 
+                    title="Filmes"
                     :results="movies">
                 </horizontal-scroll>
                 <horizontal-scroll
@@ -56,6 +59,7 @@ export default {
             people: [],
             searched: false,
             loaded: false,
+            history: this.loadHistory()
         }
     },
     methods: {
@@ -67,9 +71,11 @@ export default {
                 this.loaded = true;
                 return;
             }
+            this.user_id = this.$session.get("user_id");
             axios.get(this.backend + '/search', {
                 params: {
                     query: this.query,
+                    user_id: this.user_id
                 },
             }).then(res => {
                 this.clear();
@@ -96,6 +102,18 @@ export default {
                     'model_prop': result,
                 }
             });
+        },
+        loadHistory() {
+            this.user_id = this.$session.get("user_id");
+            axios.get(this.backend + '/history', {
+                params: {
+                    user_id: this.user_id,
+                },
+            }).then(res => {
+                this.clear();
+                return res.data.results;
+                this.loaded = true;
+            }).catch(err => console.log(err));
         }
     }
 }

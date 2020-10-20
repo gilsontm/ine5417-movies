@@ -2,6 +2,7 @@ import json
 import tornado.web
 from utils.apis import get_tmdb_api
 from database.controllers.favorite_controller import FavoriteController
+from database.controllers.search_history_controller import HistoryController
 
 class SearchHandler(tornado.web.RequestHandler):
     def set_default_headers(self):
@@ -17,10 +18,29 @@ class SearchHandler(tornado.web.RequestHandler):
             self.search()
         elif "/info" in self.request.uri:
             self.info()
+        elif "/history" in self.request.uri:
+            self.history()
+
+    def history(self):
+        try:
+            print('aaaaa')
+            user_id = self.get_argument("user_id", None)
+
+            history_controller = HistoryController()
+            self.write(history_controller.get(user_id))
+
+        except Exception as ex:
+            print(ex)
+            self.set_status(500)
 
     def search(self):
         try:
             query = self.get_argument("query", None)
+            user_id = self.get_argument("user_id", None)
+
+            history_controller = HistoryController()
+            history_controller.insert(user_id,query)
+
             search = get_tmdb_api().Search()
             promise = search.multi(query=query, language="pt")
             results = [result for result in search.results]
