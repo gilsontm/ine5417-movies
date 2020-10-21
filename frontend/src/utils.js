@@ -19,6 +19,13 @@ const utils = {
             return result.title;
         return result.name;
     },
+    original_title(result) {
+        if (result.media_type == "movie")
+            return result.original_title;
+        else if (result.media_type == "tv")
+            return result.original_name;
+        return result.name;
+    },
     backdrop(result) {
         return this.URL + this.SIZES.W1280 + result.backdrop_path;
     },

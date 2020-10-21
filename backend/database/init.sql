@@ -30,3 +30,28 @@ CREATE TABLE IF NOT EXISTS history (
     user_id integer NOT NULL,
     FOREIGN KEY (user_id) REFERENCES user(id)
 );
+
+CREATE TABLE IF NOT EXISTS analysis (
+    id integer PRIMARY KEY,
+    created_at datetime NOT NULL,
+    user_id integer NOT NULL,
+    entity_id integer NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES user(id),
+    FOREIGN KEY (entity_id) REFERENCES entity(id)
+);
+
+CREATE TABLE IF NOT EXISTS tweet (
+    id integer PRIMARY KEY,
+    text text NOT NULL,
+    created_at datetime NOT NULL,
+    latitude real,
+    longitude real,
+    author_name text NOT NULL,
+    author_address text NOT NULL,
+    author_id integer NOT NULL,
+    twitter_id integer NOT NULL,
+    analysis_id integer NOT NULL,
+    entity_id integer NOT NULL,
+    FOREIGN KEY (analysis_id) REFERENCES analysis(id),
+    FOREIGN KEY (entity_id) REFERENCES entity(id)
+);

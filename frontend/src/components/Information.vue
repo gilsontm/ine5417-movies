@@ -8,6 +8,7 @@
                         <b-col cols="2" class="text-center">
                             <img :src="$utils.poster(model)" class="w-100">
                             <b-button class="mt-3" block variant="dark" @click="setFavorite"> {{ is_favorite ? "Desfavoritar" : "Favoritar" }} </b-button>
+                            <b-button class="mt-3" block variant="dark" @click="generateAnalysis"> Gerar análise </b-button>
                         </b-col>
                         <b-col cols="10" class="text-justify px-5">
                             <h4><b>{{$utils.title(model)}}</b></h4>
@@ -132,6 +133,7 @@ export default {
             related: [],
             is_favorite: false,
             ISO6391: ISO6391,
+            user_id: null,
         }
     },
     mounted() {
@@ -160,7 +162,6 @@ export default {
             }).catch(err => console.log(err));
         },
         setFavorite() {
-            this.user_id = this.$session.get("user_id");
             axios.put(this.backend + "/favorite", {
                 user_id: this.user_id,
                 entity: this.model,
@@ -176,7 +177,16 @@ export default {
                 result.media_type = this.model.media_type;
             this.model = result;
             this.refresh();
-        }
+        },
+        generateAnalysis() {
+            axios.post(this.backend + "/analysis", {
+                user_id: this.user_id,
+                entity: this.model,
+                query: this.$utils.original_title(this.model),
+            }).then(res => {
+                console.log(res);
+            }).catch(err => console.log(err)); 
+        },
     },
 }
 </script>
