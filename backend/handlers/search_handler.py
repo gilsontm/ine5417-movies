@@ -23,15 +23,15 @@ class SearchHandler(tornado.web.RequestHandler):
 
     def history(self):
         try:
-            print('aaaaa')
             user_id = self.get_argument("user_id", None)
 
             history_controller = HistoryController()
-            self.write(history_controller.get(user_id))
+            self.write({"results": history_controller.get(user_id)})
 
         except Exception as ex:
             print(ex)
             self.set_status(500)
+            raise
 
     def search(self):
         try:
@@ -49,6 +49,7 @@ class SearchHandler(tornado.web.RequestHandler):
         except Exception as ex:
             print(ex)
             self.set_status(500)
+            raise
 
     def info(self):
         try:

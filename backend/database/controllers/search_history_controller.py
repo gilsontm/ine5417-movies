@@ -9,7 +9,7 @@ class HistoryController:
         history = search_history_model.get(user_id)
         if history is None:
             return None
-        return history.as_dict()
+        return [h.title for h in history]
 
     def insert(self,user_id,title):
         id = search_history_model.insert(user_id,title)

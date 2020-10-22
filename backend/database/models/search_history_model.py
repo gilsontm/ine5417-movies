@@ -11,17 +11,11 @@ class History(connection.BaseModel):
         table_name = "history"
 
 def get(user_id):
-    try:
-        return (
-            History.select()
-            .where(History.user == user_id)
-            .limit(10)
-            .get()
-        )
-    except History.DoesNotExist:
-        return None
-    except Exception as ex:
-        raise ex
+    return (
+        History.select()
+        .where(History.user == user_id)
+        .limit(10)
+    )
 
 def remove(user_id, title):
     return (
@@ -32,4 +26,19 @@ def remove(user_id, title):
     )
 
 def insert(user_id, title):
-    return History.insert(user=user_id, title=title).execute()
+    already_exists = False
+    try:
+        history = (History.select()
+                    .where(History.user == user_id)
+                    .limit(10)
+                  )
+
+        titles = [h.title for h in history]
+        print(f'=== titles: {titles}')
+        if title in titles:
+            already_exists = True
+    except History.DoesNotExist:
+        pass
+
+    if not already_exists:
+        return History.insert(user=user_id, title=title).execute()
