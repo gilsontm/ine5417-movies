@@ -33,7 +33,7 @@ class AnalysisHandler(tornado.web.RequestHandler):
             try:
                 # coletar tweets
                 cursor = tweepy.Cursor(api.search, q=request["query"], lang="pt")
-                tweets = [tweet for tweet in cursor.items(300)]
+                tweets = [tweet for tweet in cursor.items(100)]
             except tweepy.TweepError as ex:
                 print(ex)
                 self.set_status(401)
@@ -50,46 +50,45 @@ class AnalysisHandler(tornado.web.RequestHandler):
                 tweet_controller = TweetController()
                 tweet_controller.insert_many(analysis_id, entity["id"], tweets)
 
-                # gerar análises
+                # coletar sentimento
                 sentiment = tweet_controller.get_overall_sentiment(analysis_id)
-
-                #heatmap
+                # gerar heatmap
                 heatmap = self.heatmap(tweets)
+                # gerar wordcloud
+                wordcloud = self.word_cloud(tweets)
 
-                #wordcloud
-                self.word_cloud(tweets)
-                wordcloud = True
                 self.write({"sentiment" : sentiment, "heatmap": heatmap, "wordcloud": wordcloud})
                 self.set_status(200)
         except Exception as ex:
             print(ex)
             self.set_status(500)
-            # raise
 
     def get(self):
-        print("/map (GET)")
         if "/map" in self.request.uri:
             with open("export.html") as f:
                 self.write(f.read())
 
-    def heatmap(self,tweets):
-        gmaps.configure(api_key="AIzaSyBheOZcZc8d7FZ1Ih04WmYlRxa483qA3W8")
-        fig = gmaps.figure()
+    def heatmap(self, tweets):
         locations = [tweet.place.bounding_box.origin() for tweet in tweets if tweet.place is not None]
         locations = [(x,y) for y,x in locations]
-        fig.add_layer(gmaps.heatmap_layer(locations))
-        embed_minimal_html('export.html', views=[fig])
-        with open("export.html") as f:
-            return f.read()
+        if len(locations) > 0:
+            gmaps.configure(api_key="AIzaSyBheOZcZc8d7FZ1Ih04WmYlRxa483qA3W8")
+            fig = gmaps.figure()
+            fig.add_layer(gmaps.heatmap_layer(locations))
+            embed_minimal_html('export.html', views=[fig])
+            return True
+        return False
 
-    def word_cloud(self,tweets):
+    def word_cloud(self, tweets):
         all_tweets_words = " ".join(tweet.text for tweet in tweets)
         stopwords = set(STOPWORDS)
-        stopwords.update(["da", "meu", "em", "você", "de", "ao", "os","https"])
+        stopwords.update(["da", "meu", "em", "você", "de", "ao", "os", "https"])
 
         wordcloud = WordCloud(stopwords=stopwords,background_color='white',width=800,height=400).generate(all_tweets_words)
 
         fig, ax = plt.subplots(figsize=(8,4))
         ax.imshow(wordcloud, interpolation='bilinear')
         ax.set_axis_off()
-        wordcloud.to_file('cloud.png',)
+        wordcloud.to_file('cloud.png')
+
+        return True

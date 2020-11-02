@@ -13,6 +13,7 @@
                         <b-col cols="10" class="text-justify px-5">
                             <h4><b>{{$utils.title(model)}}</b></h4>
                             <hr>
+                            <!-- TV -->
                             <template v-if="model.media_type === 'movie'">
                                 <p><b>Título original:</b> {{info.original_title || 'indisponível'}}</p>
                                 <p><b>Resumo:</b> {{info.overview || 'indisponível'}}</p>
@@ -125,7 +126,7 @@
                     <h5> Mapa de calor </h5>
                     <hr>
                     <template v-if="analysis.heatmap">
-                        <iframe :src="mapUrl" class="map"></iframe>
+                        <iframe :src="backend + '/map'" class="map"> </iframe>
                     </template>
                     <template v-else>
                         <p> Indisponível. </p>
@@ -136,7 +137,7 @@
                     <h5> Nuvem de palavras </h5>
                     <hr>
                     <template v-if="analysis.wordcloud">
-                        <img :src="cloudUrl" class="cloud">
+                        <img :src="backend + '/cloud.png'" class="cloud">
                     </template>
                     <template v-else>
                         <p> Indisponível. </p>
@@ -237,8 +238,6 @@ export default {
                 this.analysis.sentiment = res.data.sentiment;
                 this.analysis.heatmap = res.data.heatmap;
                 this.analysis.wordcloud = res.data.wordcloud;
-                this.mapUrl = this.backend + "/map";
-                this.cloudUrl = this.backend + "/cloud.png"
                 this.$bvModal.show("analysis-modal");
             }).catch(err => {
                 console.log(err)
@@ -255,7 +254,6 @@ export default {
     background-repeat: no-repeat;
     background-size: 100%;
     padding-top: 10%;
-
 }
 
 .poster {

@@ -14,6 +14,7 @@ def get(user_id):
     return (
         History.select()
         .where(History.user == user_id)
+        .order_by(History.id.desc())
         .limit(10)
     )
 
@@ -28,17 +29,11 @@ def remove(user_id, title):
 def insert(user_id, title):
     already_exists = False
     try:
-        history = (History.select()
-                    .where(History.user == user_id)
-                    .limit(10)
-                  )
-
+        history = get(user_id)
         titles = [h.title for h in history]
-        print(f'=== titles: {titles}')
         if title in titles:
             already_exists = True
     except History.DoesNotExist:
         pass
-
     if not already_exists:
         return History.insert(user=user_id, title=title).execute()
