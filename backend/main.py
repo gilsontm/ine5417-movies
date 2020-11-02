@@ -16,6 +16,7 @@ def make_app():
         (r"/history", SearchHandler),
         (r"/analysis", AnalysisHandler),
         (r"/map", AnalysisHandler),
+        (r"/(cloud.png)",tornado.web.StaticFileHandler, {'path':'./'})
     ])
 
 def main():

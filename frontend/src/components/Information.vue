@@ -136,7 +136,7 @@
                     <h5> Nuvem de palavras </h5>
                     <hr>
                     <template v-if="analysis.wordcloud">
-                        <!-- TODO -->
+                        <img :src="cloudUrl" class="cloud">
                     </template>
                     <template v-else>
                         <p> Indisponível. </p>
@@ -236,7 +236,9 @@ export default {
             }).then(res => {
                 this.analysis.sentiment = res.data.sentiment;
                 this.analysis.heatmap = res.data.heatmap;
+                this.analysis.wordcloud = res.data.wordcloud;
                 this.mapUrl = this.backend + "/map";
+                this.cloudUrl = this.backend + "/cloud.png"
                 this.$bvModal.show("analysis-modal");
             }).catch(err => {
                 console.log(err)
@@ -264,5 +266,10 @@ export default {
 .map {
     width: 100%;
     height: 32em;
+}
+
+.cloud {
+    width: 100%;
+    height: auto;
 }
 </style>

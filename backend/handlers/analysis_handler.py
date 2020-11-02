@@ -1,12 +1,14 @@
 import json
 import tornado.web
 import gmaps
+import matplotlib.pyplot as plt
 from utils.apis import get_tweepy_api
 from utils.sentiment.analyser import SentimentAnalyser
 from database.controllers.entity_controller import EntityController
 from database.controllers.analysis_controller import AnalysisController
 from database.controllers.tweet_controller import TweetController
 from ipywidgets.embed import embed_minimal_html
+from wordcloud import WordCloud, STOPWORDS, ImageColorGenerator
 
 
 class AnalysisHandler(tornado.web.RequestHandler):
@@ -54,7 +56,10 @@ class AnalysisHandler(tornado.web.RequestHandler):
                 #heatmap
                 heatmap = self.heatmap(tweets)
 
-                self.write({"sentiment" : sentiment, "heatmap": heatmap})
+                #wordcloud
+                self.word_cloud(tweets)
+                wordcloud = True
+                self.write({"sentiment" : sentiment, "heatmap": heatmap, "wordcloud": wordcloud})
                 self.set_status(200)
         except Exception as ex:
             print(ex)
@@ -77,3 +82,14 @@ class AnalysisHandler(tornado.web.RequestHandler):
         with open("export.html") as f:
             return f.read()
 
+    def word_cloud(self,tweets):
+        all_tweets_words = " ".join(tweet.text for tweet in tweets)
+        stopwords = set(STOPWORDS)
+        stopwords.update(["da", "meu", "em", "você", "de", "ao", "os","https"])
+
+        wordcloud = WordCloud(stopwords=stopwords,background_color='white',width=800,height=400).generate(all_tweets_words)
+
+        fig, ax = plt.subplots(figsize=(8,4))
+        ax.imshow(wordcloud, interpolation='bilinear')
+        ax.set_axis_off()
+        wordcloud.to_file('cloud.png',)
