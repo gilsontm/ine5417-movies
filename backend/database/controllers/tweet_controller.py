@@ -23,9 +23,9 @@ class TweetController:
                 "analysis": analysis_id,
                 "entity": entity_id,
             }
-            if tweet.coordinates:
-                data["latitude"] = tweet.coordinates.latitude
-                data["longitude"] = tweet.coordinates.longitude
+            # if tweet.coordinates:
+            #     data["latitude"] = tweet.coordinates.latitude
+            #     data["longitude"] = tweet.coordinates.longitude
             parsed_tweets.append(data)
 
         with connection.database.atomic() as transaction:

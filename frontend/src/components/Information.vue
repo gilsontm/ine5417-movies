@@ -93,7 +93,7 @@
                 </b-container>
             </div>
         </template>
-        <template v-else> 
+        <template v-else>
             <div class="d-flex justify-content-center mt-5">
                 <b-spinner></b-spinner>
             </div>
@@ -109,7 +109,7 @@
                     <h5> Análise de sentimento </h5>
                     <hr>
                     <template v-if="analysis.sentiment !== null">
-                        <p> 
+                        <p>
                             <span :class="analysis.sentiment >= 50 ? 'text-success' : 'text-danger'">
                                 {{analysis.sentiment}}%
                             </span>
@@ -125,7 +125,7 @@
                     <h5> Mapa de calor </h5>
                     <hr>
                     <template v-if="analysis.heatmap">
-                        <!-- TODO -->
+                        <iframe :src="mapUrl" class="map"></iframe>
                     </template>
                     <template v-else>
                         <p> Indisponível. </p>
@@ -183,7 +183,7 @@ export default {
                 sentiment: null,
                 heatmap: null,
                 wordcloud: null,
-            }
+            },
         }
     },
     mounted() {
@@ -235,11 +235,13 @@ export default {
                 query: this.$utils.original_title(this.model),
             }).then(res => {
                 this.analysis.sentiment = res.data.sentiment;
+                this.analysis.heatmap = res.data.heatmap;
+                this.mapUrl = this.backend + "/map";
                 this.$bvModal.show("analysis-modal");
             }).catch(err => {
                 console.log(err)
                 this.$utils.showError('Erro ao gerar análises.')
-            }); 
+            });
         },
     },
 }
@@ -257,5 +259,10 @@ export default {
 .poster {
     width: 185px;
     max-height: 278px;
+}
+
+.map {
+    width: 100%;
+    height: 32em;
 }
 </style>
