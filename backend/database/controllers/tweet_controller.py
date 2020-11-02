@@ -12,6 +12,7 @@ class TweetController:
         for tweet in tweets:
             data = {
                 "text": tweet.text,
+                "sentiment": tweet.sentiment,
                 "created_at": tweet.created_at,
                 "latitude": None,
                 "longitude": None,
@@ -37,3 +38,20 @@ class TweetController:
             except Exception as ex:
                 transaction.rollback()
                 raise ex
+
+    def get_by_analysis(self, analysis_id):
+        tweets = tweet_model.get_by_analysis(analysis_id)
+        if tweets is None:
+            return []
+        results = [tweet.as_dict() for tweet in tweets]
+        return results
+
+    def get_overall_sentiment(self, analysis_id):
+        sentiment = tweet_model.get_overall_sentiment(analysis_id)
+        if sentiment is None:
+            return None
+        positive = (sentiment.count - abs(sentiment.sum)) / 2
+        if sentiment.sum > 0:
+            positive += sentiment.sum
+        percentage = positive / (sentiment.count) * 100
+        return percentage

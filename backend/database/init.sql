@@ -43,6 +43,7 @@ CREATE TABLE IF NOT EXISTS analysis (
 CREATE TABLE IF NOT EXISTS tweet (
     id integer PRIMARY KEY,
     text text NOT NULL,
+    sentiment integer,
     created_at datetime NOT NULL,
     latitude real,
     longitude real,

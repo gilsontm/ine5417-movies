@@ -98,6 +98,51 @@
                 <b-spinner></b-spinner>
             </div>
         </template>
+
+        <b-modal
+            id="analysis-modal"
+            size="lg"
+            title="Resultado das análises"
+            scrollable
+            hide-footer>
+                <div class="my-2">
+                    <h5> Análise de sentimento </h5>
+                    <hr>
+                    <template v-if="analysis.sentiment !== null">
+                        <p> 
+                            <span :class="analysis.sentiment >= 50 ? 'text-success' : 'text-danger'">
+                                {{analysis.sentiment}}%
+                            </span>
+                            dos tweets avaliados demonstravam sentimento positivo.
+                        </p>
+                    </template>
+                    <template v-else>
+                        <p> Indisponível. </p>
+                    </template>
+                </div>
+
+                <div class="my-2">
+                    <h5> Mapa de calor </h5>
+                    <hr>
+                    <template v-if="analysis.heatmap">
+                        <!-- TODO -->
+                    </template>
+                    <template v-else>
+                        <p> Indisponível. </p>
+                    </template>
+                </div>
+
+                <div class="my-2">
+                    <h5> Nuvem de palavras </h5>
+                    <hr>
+                    <template v-if="analysis.wordcloud">
+                        <!-- TODO -->
+                    </template>
+                    <template v-else>
+                        <p> Indisponível. </p>
+                    </template>
+                </div>
+        </b-modal>
     </div>
 </template>
 
@@ -134,6 +179,11 @@ export default {
             is_favorite: false,
             ISO6391: ISO6391,
             user_id: null,
+            analysis: {
+                sentiment: null,
+                heatmap: null,
+                wordcloud: null,
+            }
         }
     },
     mounted() {
@@ -179,13 +229,17 @@ export default {
             this.refresh();
         },
         generateAnalysis() {
-            axios.post(this.backend + "/analysis", {
+            axios.post(this.backend + '/analysis', {
                 user_id: this.user_id,
                 entity: this.model,
                 query: this.$utils.original_title(this.model),
             }).then(res => {
-                console.log(res);
-            }).catch(err => console.log(err)); 
+                this.analysis.sentiment = res.data.sentiment;
+                this.$bvModal.show("analysis-modal");
+            }).catch(err => {
+                console.log(err)
+                this.$utils.showError('Erro ao gerar análises.')
+            }); 
         },
     },
 }

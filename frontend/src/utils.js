@@ -29,6 +29,13 @@ const utils = {
     backdrop(result) {
         return this.URL + this.SIZES.W1280 + result.backdrop_path;
     },
+    showError(self, message) {
+        self.$bvToast.toast(message, {
+            title: "Erro",
+            variant: "danger",
+            noAutoHide: true,
+        });
+    }
 }
 
 export default utils;

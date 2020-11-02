@@ -1,6 +1,7 @@
 import json
 import tornado.web
 from utils.apis import get_tweepy_api
+from utils.sentiment.analyser import SentimentAnalyser
 from database.controllers.entity_controller import EntityController
 from database.controllers.analysis_controller import AnalysisController
 from database.controllers.tweet_controller import TweetController
@@ -33,11 +34,19 @@ class AnalysisHandler(tornado.web.RequestHandler):
                 print(ex)
                 self.set_status(401)
             else:
+                # análise de sentimento
+                texts = [tweet.text for tweet in tweets]
+                sentiment_analyser = SentimentAnalyser()
+                sentiments = sentiment_analyser.analyse(texts)
+                for i in range(len(tweets)):
+                    tweets[i].sentiment = sentiments[i]
+
+                # salvar tweets no banco de dados
                 tweet_controller = TweetController()
                 tweet_controller.insert_many(analysis_id, entity["id"], tweets)
 
-                # gerar análises
-
+                sentiment = tweet_controller.get_overall_sentiment(analysis_id)
+                self.write({"sentiment" : sentiment})
                 self.set_status(200)
         except Exception as ex:
             print(ex)

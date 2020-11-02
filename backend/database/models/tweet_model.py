@@ -1,4 +1,4 @@
-from peewee import TextField, DoubleField, DateTimeField, ForeignKeyField, IntegerField
+from peewee import fn, TextField, DoubleField, DateTimeField, ForeignKeyField, IntegerField
 from database import connection
 from database.models.user_model import User
 from database.models.entity_model import Entity
@@ -8,6 +8,7 @@ from datetime import datetime
 
 class Tweet(connection.BaseModel):
     text = TextField(null=False)
+    sentiment = IntegerField()
     created_at = DateTimeField(null=False)
     latitude = DoubleField()
     longitude = DoubleField()
@@ -26,5 +27,26 @@ class Tweet(connection.BaseModel):
 def insert_many(tweets):
     try:
         Tweet.insert_many(tweets).execute()
+    except Exception as ex:
+        raise ex
+
+def get_by_analysis(analysis_id):
+    try:
+        return Tweet.select().where(Tweet.analysis == analysis_id).execute()
+    except Entity.DoesNotExist:
+        return None
+    except Exception as ex:
+        raise ex
+
+def get_overall_sentiment(analysis_id):
+    try:
+        return (
+            Tweet
+            .select(fn.COUNT(Tweet.id).alias("count"), fn.SUM(Tweet.sentiment).alias("sum"))
+            .where(Tweet.analysis == analysis_id)
+            .get()
+        )
+    except Entity.DoesNotExist:
+        return None
     except Exception as ex:
         raise ex
