@@ -1,6 +1,8 @@
 import json
 import tornado.web
+from datetime import datetime
 from utils.apis import get_tmdb_api
+from utils.apis import get_tweepy_api
 from database.controllers.favorite_controller import FavoriteController
 from database.controllers.search_history_controller import HistoryController
 
@@ -71,12 +73,34 @@ class SearchHandler(tornado.web.RequestHandler):
                 response = model.combined_credits(language="pt")
                 related = response["cast"] + response["crew"]
 
+            query = self.get_argument("query", None)
+            tweets = self.get_recent_tweets(query)
+
             self.write({
                 "info": model.info(language="pt"),
                 "related": related,
-                "is_favorite": is_favorite
+                "is_favorite": is_favorite,
+                "recent_tweets": tweets,
             })
             self.set_status(200)
         except Exception as ex:
             print(ex)
             self.set_status(500)
+
+    def get_recent_tweets(self, query):
+        tweepy, api = get_tweepy_api()
+        try:
+            cursor = tweepy.Cursor(api.search, q=query, lang="pt")
+            tweets = [tweet for tweet in cursor.items(15)]
+        except tweepy.TweepError as ex:
+            tweets = []
+        tweets = [
+            {
+                "id": tweet.id,
+                "text": tweet.text,
+                "author_name": tweet.author.name,
+                "author_address": tweet.author.screen_name,
+                "created_at": datetime.strftime(tweet.created_at, "%H:%M %d/%m/%Y")
+            } for tweet in tweets
+        ]
+        return tweets
