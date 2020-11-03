@@ -7,7 +7,7 @@ class TweetController:
     def __init__(self):
         connection.database.connect(reuse_if_open=True)
 
-    def insert_many(self, analysis_id, entity_id, tweets):
+    def insert_many(self, analysis_id, tweets):
         parsed_tweets = []
         for tweet in tweets:
             data = {
@@ -21,7 +21,6 @@ class TweetController:
                 "author_name": tweet.author.name,
                 "author_address": tweet.author.screen_name,
                 "analysis": analysis_id,
-                "entity": entity_id,
             }
             if tweet.place:
                 origin = tweet.place.bounding_box.origin()

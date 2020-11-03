@@ -52,7 +52,5 @@ CREATE TABLE IF NOT EXISTS tweet (
     author_id integer NOT NULL,
     twitter_id integer NOT NULL,
     analysis_id integer NOT NULL,
-    entity_id integer NOT NULL,
-    FOREIGN KEY (analysis_id) REFERENCES analysis(id),
-    FOREIGN KEY (entity_id) REFERENCES entity(id)
+    FOREIGN KEY (analysis_id) REFERENCES analysis(id)
 );

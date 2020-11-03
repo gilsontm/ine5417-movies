@@ -19,7 +19,6 @@ class Tweet(connection.BaseModel):
     author_address = TextField(null=False)
 
     analysis = ForeignKeyField(column_name="analysis_id", field="id", model=Analysis)
-    entity = ForeignKeyField(column_name="entity_id", field="id", model=Entity)
 
     class Meta:
         table_name = "tweet"

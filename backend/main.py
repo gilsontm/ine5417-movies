@@ -15,8 +15,7 @@ def make_app():
         (r"/favorite", UserHandler),
         (r"/history", SearchHandler),
         (r"/analysis", AnalysisHandler),
-        (r"/map", AnalysisHandler),
-        (r"/(cloud.png)",tornado.web.StaticFileHandler, {'path':'./'})
+        (r"/heatmap/([^/]+)", AnalysisHandler),
     ])
 
 def main():

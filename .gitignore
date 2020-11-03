@@ -153,3 +153,9 @@ pnpm-debug.log*
 
 # database
 backend/database/*.db
+
+# generate files
+*.jpg
+*.png
+*.txt
+heatmap-*.html
