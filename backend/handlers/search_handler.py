@@ -1,20 +1,12 @@
 import json
-import tornado.web
 from datetime import datetime
 from utils.apis import get_tmdb_api
 from utils.apis import get_tweepy_api
+from handlers.base_handler import BaseHandler
 from database.controllers.favorite_controller import FavoriteController
-from database.controllers.search_history_controller import HistoryController
+from database.controllers.history_controller import HistoryController
 
-class SearchHandler(tornado.web.RequestHandler):
-    def set_default_headers(self):
-        self.set_header("Access-Control-Allow-Origin", "*")
-        self.set_header("Access-Control-Allow-Headers", "x-requested-with, Content-Type")
-        self.set_header('Access-Control-Allow-Methods', 'POST, GET, OPTIONS')
-
-    def options(self):
-        pass
-
+class SearchHandler(BaseHandler):
     def get(self):
         if "/search" in self.request.uri:
             self.search()
@@ -26,10 +18,9 @@ class SearchHandler(tornado.web.RequestHandler):
     def history(self):
         try:
             user_id = self.get_argument("user_id", None)
-
             history_controller = HistoryController()
-            self.write({"results": history_controller.get(user_id)})
-
+            results = history_controller.get(user_id)
+            self.write({"results": results})
         except Exception as ex:
             print(ex)
             self.set_status(500)
@@ -88,19 +79,19 @@ class SearchHandler(tornado.web.RequestHandler):
             self.set_status(500)
 
     def get_recent_tweets(self, query):
-        tweepy, api = get_tweepy_api()
+        tweets = []
         try:
+            tweepy, api = get_tweepy_api()
             cursor = tweepy.Cursor(api.search, q=query, lang="pt")
-            tweets = [tweet for tweet in cursor.items(15)]
+            results = [tweet for tweet in cursor.items(15)]
+            for tweet in results:
+                tweets.append({
+                    "id": tweet.id,
+                    "text": tweet.text,
+                    "author_name": tweet.author.name,
+                    "author_address": tweet.author.screen_name,
+                    "created_at": datetime.strftime(tweet.created_at, "%H:%M %d/%m/%Y")
+                })
         except tweepy.TweepError as ex:
-            tweets = []
-        tweets = [
-            {
-                "id": tweet.id,
-                "text": tweet.text,
-                "author_name": tweet.author.name,
-                "author_address": tweet.author.screen_name,
-                "created_at": datetime.strftime(tweet.created_at, "%H:%M %d/%m/%Y")
-            } for tweet in tweets
-        ]
+            print(ex)
         return tweets

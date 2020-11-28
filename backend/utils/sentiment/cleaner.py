@@ -18,15 +18,16 @@ class Cleaner:
     def get_stopwords(self):
         nltk.download("stopwords")
         words = nltk.corpus.stopwords.words("portuguese")
+        words = list(filter(lambda w: len(w) > 2, words))
         return words
 
     def clean_tweets(self, tweets):
+        is_valid = lambda w: len(w) > 2 and not (w.startswith("http") or w.startswith("@")) and not (w in self.stopwords)
         filtered = []
         for tweet in tweets:
             tokens = word_tokenize(tweet)
             tokens = [w.lower() for w in tokens]
-            tokens = list(filter(lambda w: not (w.startswith("http") or w.startswith("@")), tokens))
-            tokens = list(filter(lambda w: w not in self.stopwords, tokens))
+            tokens = list(filter(is_valid, tokens))
             filtered.append(tokens)
         tagged = self.tagger.tag_sents(filtered)
         cleaned = []
@@ -34,4 +35,4 @@ class Cleaner:
             tokens = [word for (word, tag) in tokens if tag in self.tags]
             tokens = [self.stemmer.stem(w) for w in tokens]
             cleaned.append(tokens)
-        return cleaned
+        return filtered, cleaned

@@ -48,9 +48,9 @@ class SentimentAnalyser:
     def analyse(self, tweets):
         if not self.loaded:
             return None
-        cleaned_tweets = self.cleaner.clean_tweets(tweets)
+        filtered, cleaned = self.cleaner.clean_tweets(tweets)
         results = []
-        for tokens in cleaned_tweets:
+        for tokens in cleaned:
             predict = self.model.classify(dict([t, True] for t in tokens))
             results.append(predict)
-        return results
+        return results, filtered

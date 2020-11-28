@@ -12,8 +12,8 @@ class EntityController:
             return None
         return model.as_dict()
 
-    def get_or_insert(self, entity):
-        model = entity_model.get(entity)
+    def get_or_create(self, entity):
+        model, _ = entity_model.get_or_create(entity)
         if model is None:
-            model = entity_model.insert(entity)
+            return None
         return model.as_dict()

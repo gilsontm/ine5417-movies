@@ -32,7 +32,7 @@ def insert_many(tweets):
 def get_by_analysis(analysis_id):
     try:
         return Tweet.select().where(Tweet.analysis == analysis_id).execute()
-    except Entity.DoesNotExist:
+    except Tweet.DoesNotExist:
         return None
     except Exception as ex:
         raise ex
@@ -41,11 +41,27 @@ def get_overall_sentiment(analysis_id):
     try:
         return (
             Tweet
-            .select(fn.COUNT(Tweet.id).alias("count"), fn.SUM(Tweet.sentiment).alias("sum"))
+            .select(fn.SUM(Tweet.sentiment ==  1).alias("positive"),
+                    fn.SUM(Tweet.sentiment == -1).alias("negative"))
             .where(Tweet.analysis == analysis_id)
             .get()
         )
-    except Entity.DoesNotExist:
+    except Tweet.DoesNotExist:
+        return None
+    except Exception as ex:
+        raise ex
+
+def get_coordinates(analysis_id):
+    try:
+        return (
+            Tweet
+            .select(Tweet.longitude, Tweet.latitude)
+            .where(Tweet.analysis == analysis_id)
+            .where(Tweet.longitude.is_null(False))
+            .where(Tweet.latitude.is_null(False))
+            .execute()
+        )
+    except Tweet.DoesNotExist:
         return None
     except Exception as ex:
         raise ex

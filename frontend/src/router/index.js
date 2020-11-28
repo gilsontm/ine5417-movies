@@ -22,9 +22,14 @@ export default new Router({
             props: true,
         },
         {
-            path: '/user',
-            name: 'user',
-            component: require('@/components/User').default,
+            path: '/favorites',
+            name: 'favorites',
+            component: require('@/components/Favorites').default,
+        },
+        {
+            path: '/analysis',
+            name: 'analysis',
+            component: require('@/components/Analysis').default,
         },
         {
             path: '*',

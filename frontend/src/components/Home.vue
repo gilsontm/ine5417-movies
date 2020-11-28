@@ -1,6 +1,6 @@
 <template>
     <div>
-        <menu-header title="" :isHome="true" :isUser="false"> </menu-header>
+        <menu-header title="" :isHome="true"> </menu-header>
         <b-row class="center mt-2 mx-0">
             <b-col cols="4" offset="3" class="px-1">
                 <b-form-input list="history" type="text" v-model="query" autocomplete="off"> </b-form-input>

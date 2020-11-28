@@ -13,11 +13,14 @@
     "bootstrap-vue": "^2.18.1",
     "core-js": "^3.6.5",
     "iso-639-1": "^2.1.4",
+    "leaflet": "^1.7.1",
+    "leaflet.heat": "^0.2.0",
     "vue": "^2.6.11",
     "vue-input-dropdown": "^0.1.9",
     "vue-router": "^3.4.8",
     "vue-session": "^1.0.0",
-    "vue-simple-search-dropdown": "^1.0.1"
+    "vue-simple-search-dropdown": "^1.0.1",
+    "vuewordcloud": "^18.7.12"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "^4.5.8",

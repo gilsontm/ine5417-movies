@@ -1,6 +1,6 @@
 <template>
     <div>
-        <menu-header title="Página do usuário" :isHome="false" :isUser="true"></menu-header>
+        <menu-header title="Favoritos"></menu-header>
         <b-container v-if="loaded">
             <horizontal-scroll
                 class="my-2"
@@ -33,7 +33,7 @@ import menuHeader from './shared/Header.vue'
 import horizontalScroll from './shared/HorizontalScroll.vue'
 
 export default {
-    name: 'user',
+    name: 'favorites',
     components: {
         menuHeader,
         horizontalScroll,

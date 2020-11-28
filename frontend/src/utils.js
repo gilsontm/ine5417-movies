@@ -29,6 +29,14 @@ const utils = {
     backdrop(result) {
         return this.URL + this.SIZES.W1280 + result.backdrop_path;
     },
+    showSuccess(self, message, to) {
+        self.$bvToast.toast(message, {
+            title: "Sucesso!",
+            variant: "success",
+            noAutoHide: true,
+            to: to ? to : null,
+        });
+    },
     showError(self, message) {
         self.$bvToast.toast(message, {
             title: "Erro",

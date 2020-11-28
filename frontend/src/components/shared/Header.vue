@@ -6,7 +6,7 @@
                     v-if="!isHome"
                     variant="outline-dark"
                     class="mx-1"
-                    @click="toHome">
+                    @click="$router.push('/home')">
                     Voltar
                 </b-button>
             </b-navbar-brand>
@@ -15,7 +15,8 @@
             </b-navbar-brand>
             <b-navbar-nav class="ml-auto">
                 <b-dropdown :text="`Olá, ${username}!`" right class="m-2" variant="outline-dark">
-                    <b-dropdown-item @click="toUser" :disabled="isUser">Ver favoritos</b-dropdown-item>
+                    <b-dropdown-item @click="$router.push('/favorites')" :disabled="isFavorites">Ver favoritos</b-dropdown-item>
+                    <b-dropdown-item @click="$router.push('/analysis')" :disabled="isAnalysis">Ver análises</b-dropdown-item>
                     <b-dropdown-divider></b-dropdown-divider>
                     <b-dropdown-item @click="logout" variant="danger">Sair</b-dropdown-item>
                 </b-dropdown>
@@ -27,7 +28,7 @@
 <script>
 export default {
     name: 'menu-header',
-    props: ['title', 'isHome', 'isUser'],
+    props: ['title', 'isHome', 'isFavorites', 'isAnalysis'],
     data() {
         return {
             username: '',
@@ -41,12 +42,6 @@ export default {
         this.username = this.$session.get("user_username");
     },
     methods: {
-        toHome() {
-            this.$router.push('/home');
-        },
-        toUser() {
-            this.$router.push('/user');
-        },
         logout() {
             this.$session.destroy();
             this.$router.push("/login");

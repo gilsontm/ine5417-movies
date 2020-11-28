@@ -1,16 +1,8 @@
 import json
-import tornado.web
+from handlers.base_handler import BaseHandler
 from database.controllers.user_controller import UserController
 
-class LoginHandler(tornado.web.RequestHandler):
-    def set_default_headers(self):
-        self.set_header("Access-Control-Allow-Origin", "*")
-        self.set_header("Access-Control-Allow-Headers", "x-requested-with, Content-Type")
-        self.set_header('Access-Control-Allow-Methods', 'POST, GET, OPTIONS')
-
-    def options(self):
-        pass
-
+class LoginHandler(BaseHandler):
     def post(self):
         if "/login" in self.request.uri:
             self.login()

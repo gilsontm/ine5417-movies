@@ -2,6 +2,7 @@ from peewee import IntegerField, TextField
 from database import connection
 
 class Entity(connection.BaseModel):
+    title = TextField()
     tmdb_id = IntegerField()
     media_type = TextField()
 
@@ -21,8 +22,9 @@ def get(entity):
     except Exception as ex:
         raise ex
 
-def insert(entity):
-    return Entity.create(
-            tmdb_id=entity["id"],
-            media_type=entity["media_type"]
-        )
+def get_or_create(entity):
+    return Entity.get_or_create(
+        title=entity["title"],
+        tmdb_id=entity["id"],
+        media_type=entity["media_type"],
+    )

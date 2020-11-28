@@ -15,7 +15,8 @@ def make_app():
         (r"/favorite", UserHandler),
         (r"/history", SearchHandler),
         (r"/analysis", AnalysisHandler),
-        (r"/heatmap/([^/]+)", AnalysisHandler),
+        (r"/analysis/list", AnalysisHandler),
+        (r"/analysis/data", AnalysisHandler),
     ])
 
 def main():

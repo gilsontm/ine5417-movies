@@ -13,5 +13,8 @@ class Analysis(connection.BaseModel):
     class Meta:
         table_name = "analysis"
 
+def get_by_user_id(user_id):
+    return Analysis.select().where(Analysis.user == user_id).order_by(Analysis.created_at.desc()).execute()
+
 def insert(user_id, entity_id):
     return Analysis.insert(user=user_id, entity=entity_id).execute()

@@ -4,6 +4,8 @@ import App from './App.vue'
 import router from './router'
 import utils from './utils'
 import { BootstrapVue } from 'bootstrap-vue'
+import "leaflet/dist/leaflet.css"
+import "leaflet.heat/dist/leaflet-heat.js"
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
 

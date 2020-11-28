@@ -1,18 +1,10 @@
 import json
-import tornado.web
 from utils.apis import get_tmdb_api
+from handlers.base_handler import BaseHandler
 from database.controllers.entity_controller import EntityController
 from database.controllers.favorite_controller import FavoriteController
 
-class UserHandler(tornado.web.RequestHandler):
-    def set_default_headers(self):
-        self.set_header("Access-Control-Allow-Origin", "*")
-        self.set_header("Access-Control-Allow-Headers", "x-requested-with, Content-Type")
-        self.set_header('Access-Control-Allow-Methods', 'POST, GET, PUT, OPTIONS')
-
-    def options(self):
-        pass
-
+class UserHandler(BaseHandler):
     def get(self):
         if "/favorite" in self.request.uri:
             self.get_favorites()
@@ -53,7 +45,7 @@ class UserHandler(tornado.web.RequestHandler):
             entity_controller = EntityController()
             favorite_controller = FavoriteController()
             if request["favorite"]:
-                entity = entity_controller.get_or_insert(request["entity"])
+                entity = entity_controller.get_or_create(request["entity"])
                 favorite_controller.insert(user_id, entity["id"])
             else:
                 entity = entity_controller.get(request["entity"])

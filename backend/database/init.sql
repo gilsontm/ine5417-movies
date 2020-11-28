@@ -12,6 +12,7 @@ EXCEPT SELECT * FROM user;
 
 CREATE TABLE IF NOT EXISTS entity (
     id integer PRIMARY KEY,
+    title text NOT NULL,
     tmdb_id integer NOT NULL,
     media_type text NOT NULL
 );
@@ -51,6 +52,14 @@ CREATE TABLE IF NOT EXISTS tweet (
     author_address text NOT NULL,
     author_id integer NOT NULL,
     twitter_id integer NOT NULL,
+    analysis_id integer NOT NULL,
+    FOREIGN KEY (analysis_id) REFERENCES analysis(id)
+);
+
+CREATE TABLE IF NOT EXISTS word (
+    id integer PRIMARY KEY,
+    text text NOT NULL,
+    quantity integer NOT NULL,
     analysis_id integer NOT NULL,
     FOREIGN KEY (analysis_id) REFERENCES analysis(id)
 );
