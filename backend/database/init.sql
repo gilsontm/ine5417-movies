@@ -63,3 +63,13 @@ CREATE TABLE IF NOT EXISTS word (
     analysis_id integer NOT NULL,
     FOREIGN KEY (analysis_id) REFERENCES analysis(id)
 );
+
+CREATE TABLE IF NOT EXISTS comment (
+    id integer PRIMARY KEY,
+    text text NOT NULL,
+    created_at datetime NOT NULL,
+    user_id integer NOT NULL,
+    entity_id integer NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES user(id),
+    FOREIGN KEY (entity_id) REFERENCES entity(id)
+);

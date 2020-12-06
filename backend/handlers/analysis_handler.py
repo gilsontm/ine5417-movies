@@ -24,7 +24,7 @@ class AnalysisHandler(BaseHandler):
             analysis_controller = AnalysisController()
             analysis = analysis_controller.get_by_user_id(user_id)
             for instance in analysis:
-                instance["is_new"] = (instance["created_at"] - datetime.now()).days < 1
+                instance["is_new"] = (datetime.now() - instance["created_at"]).days < 1
                 instance["created_at"] = instance["created_at"].strftime("%H:%M %d/%m/%Y")
             self.write({"analysis": analysis})
             self.set_status(200)

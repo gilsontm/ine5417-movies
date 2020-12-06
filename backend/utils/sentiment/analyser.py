@@ -4,16 +4,9 @@ import pickle
 import nltk
 from nltk.classify.naivebayes import NaiveBayesClassifier
 from utils.sentiment.cleaner import Cleaner
+from utils.singleton import Singleton
 
-class SentimentAnalyser:
-    """ Singleton """
-    _instance = None
-
-    def __new__(cls):
-        if cls._instance is None:
-            cls._instance = super().__new__(cls)
-        return cls._instance
-
+class SentimentAnalyser(Singleton):
     def __init__(self):
         self.cleaner = Cleaner()
         self.loaded = False
