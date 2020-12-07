@@ -1,7 +1,8 @@
 import json
 import base64
-from collections import Counter
 from datetime import datetime
+from collections import Counter
+from utils.exporter import Exporter
 from utils.apis import get_tweepy_api, get_tmdb_api
 from handlers.base_handler import BaseHandler
 from utils.sentiment.analyser import SentimentAnalyser
@@ -47,6 +48,12 @@ class AnalysisHandler(BaseHandler):
             self.set_status(500)
 
     def post(self):
+        if "/export" in self.request.uri:
+            self.export_analysis()
+        else:
+            self.create_analysis()
+
+    def create_analysis(self):
         try:
             request = json.loads(self.request.body)
             word_controller = WordController()
@@ -84,3 +91,19 @@ class AnalysisHandler(BaseHandler):
         for tweet in filtered:
             counter.update(tweet)
         return counter
+
+    def export_analysis(self):
+        try:
+            request = json.loads(self.request.body)
+            exporter = Exporter()
+            exporter.to_document()
+            if request["format"] == "png":
+                exporter.to_image()
+            path, content_type = exporter.export(request)
+            self.set_header("Content-Type", content_type)
+            self.set_header("Content-Disposition", f"attachment; filename={path}")
+            self.write(open(path, "rb").read())
+            self.set_status(200)
+        except Exception as ex:
+            print(ex)
+            self.set_status(500)

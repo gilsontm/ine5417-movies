@@ -17,6 +17,7 @@ def make_app():
         (r"/analysis", AnalysisHandler),
         (r"/analysis/list", AnalysisHandler),
         (r"/analysis/data", AnalysisHandler),
+        (r"/analysis/export", AnalysisHandler),
     ])
 
 def main():

@@ -1,6 +1,6 @@
 <template>
     <div>
-        <menu-header title="Favoritos"></menu-header>
+        <menu-header title="Favoritos" :isFavorites="true"></menu-header>
         <b-container v-if="loaded">
             <horizontal-scroll
                 class="my-2"

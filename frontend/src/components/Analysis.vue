@@ -1,6 +1,6 @@
 <template>
     <div>
-        <menu-header title="Análises"></menu-header>
+        <menu-header title="Análises" :isAnalysis="true"></menu-header>
         <b-container v-if="loaded">
             <b-card no-body class="my-5">
                 <b-card-header> <h4 class="mb-0"> Selecione uma análise </h4> </b-card-header> 

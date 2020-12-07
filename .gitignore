@@ -158,4 +158,4 @@ backend/database/*.db
 *.jpg
 *.png
 *.txt
-heatmap-*.html
+*.csv
