@@ -86,6 +86,19 @@
                                     <p><b>Também conhecido(a) como:</b> {{info.also_known_as.join(', ') || 'indisponível'}}</p>
                                 </template>
                             </div>
+                            <div v-for="comment in comments" :key="comment.id" class="mb-4" style='font-size: 0.75em;'>
+                                <p class="m-0">
+                                    <b class="text-info"> {{comment.username}} </b>
+                                </p>
+                                <p class="m-0"> {{comment.text}} </p>
+                                <p class="m-0"> {{comment.created_at}} </p>
+                            </div>
+                        <!-- parte de por os comentarios -->
+                            <form class="comments" @submit.prevent="postComments">
+                                <p class="m-0"> <b class="m-0"> <label for="comment">Adicione um comentário:</label> </b> </p>
+                                <p class="m-0"> <textarea id="comment" v-model="new_comment" style="width:700px;"></textarea> </p>
+                                <p class="m-0"> <input type="submit" value="Enviar"> </p>
+                            </form>
                         </b-col>
                         <b-col cols="2">
                             <h4> <b> Tweets recentes </b> </h4>
@@ -156,6 +169,8 @@ export default {
             related: [],
             is_favorite: false,
             recent_tweets: [],
+            comments: [],
+            new_comment: "",
             ISO6391: ISO6391,
             user_id: null,
             analysis: {
@@ -191,8 +206,12 @@ export default {
                 this.related = res.data.related;
                 this.is_favorite = res.data.is_favorite;
                 this.recent_tweets = res.data.recent_tweets;
-                this.loaded = true;
-            }).catch(err => console.log(err));
+                this.generateComments();
+            }).catch(err => {
+                console.error(err)
+                throw err;
+            });
+            this.loaded = true;
         },
         setFavorite() {
             axios.put(this.backend + "/favorite", {
@@ -225,6 +244,31 @@ export default {
                 this.overlay = false;
                 console.log(err)
                 this.$utils.showError(this, 'Erro ao gerar análises.')
+            });
+        },
+        generateComments() {
+            axios.get(this.backend + '/comments', {
+                params: {
+                    entity: this.info.id,
+                }
+            }).then(res => {
+                console.log(res);
+                console.log("aaaaaaaaaaaaaaaaaaaaaa");
+                this.comments = res.data.results;
+            }).then(err => {
+                console.error("err: " + err)
+                this.$utils.showError(this, 'Erro ao pegar comentários.')
+            });
+        },
+        postComments() {
+            axios.post(this.backend + '/comments', {
+                user_id: this.user_id,
+                text: this.new_comment,
+                entity_id: this.info.id,
+            }).then(res => {
+                if (res.status === 200) {
+                    alert("comentário enviado com sucesso!")
+                }
             });
         },
     },

@@ -5,6 +5,7 @@ from handlers.login_handler import LoginHandler
 from handlers.search_handler import SearchHandler
 from handlers.user_handler import UserHandler
 from handlers.analysis_handler import AnalysisHandler
+from handlers.comment_handler import CommentHandler
 
 def make_app():
     return tornado.web.Application([
@@ -18,6 +19,7 @@ def make_app():
         (r"/analysis/list", AnalysisHandler),
         (r"/analysis/data", AnalysisHandler),
         (r"/analysis/export", AnalysisHandler),
+        (r"/comments",CommentHandler),
     ])
 
 def main():
