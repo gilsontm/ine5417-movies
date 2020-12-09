@@ -89,12 +89,12 @@
                             <div class="mt-5">
                                 <h5> <b> Comentários </b> </h5>
                                 <template v-if="comments && comments.length > 0">
-                                    <div v-for="comment in comments" :key="comment.id" class="mb-4 text-break"  style='font-size: 0.75em;'>
+                                    <div v-for="comment in comments" :key="comment.id" class="mb-4 text-break"  style='font-size: 1em;'>
                                         <p class="m-0">
-                                            <b class="text-info"> {{comment.username}} </b>
+                                            <b class="text-info" style='font-size: 1.25em'> {{comment.user.username}} </b>
                                         </p>
                                         <p class="m-0"> {{comment.text}} </p>
-                                        <p class="m-0"> {{comment.created_at}} </p>
+                                        <p class="m-0"> {{formatDate(comment.created_at)}} </p>
                                     </div>
                                 </template>
                                 <template v-else>
@@ -149,6 +149,7 @@ import axios from 'axios'
 import ISO6391 from 'iso-639-1'
 import menuHeader from './shared/Header.vue'
 import horizontalScroll from './shared/HorizontalScroll.vue'
+import moment from 'moment'
 
 export default {
     props: ['model_prop'],
@@ -254,6 +255,9 @@ export default {
                 this.comments = [];
                 res.data.results.forEach(e => this.comments.push(e));
             }).catch(err => console.log(err));
+        },
+        formatDate(value) {
+            return moment(String(value)).format("DD/MM/YYYY hh:mm")
         },
         postComments() {
             axios.post(this.backend + '/comments', {
