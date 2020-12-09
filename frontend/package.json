@@ -16,7 +16,6 @@
     "iso-639-1": "^2.1.4",
     "leaflet": "^1.7.1",
     "leaflet.heat": "^0.2.0",
-    "moment": "^2.29.1",
     "vue": "^2.6.11",
     "vue-input-dropdown": "^0.1.9",
     "vue-router": "^3.4.8",
