@@ -86,19 +86,26 @@
                                     <p><b>Também conhecido(a) como:</b> {{info.also_known_as.join(', ') || 'indisponível'}}</p>
                                 </template>
                             </div>
-                            <div v-for="comment in comments" :key="comment.id" class="mb-4" style='font-size: 0.75em;'>
-                                <p class="m-0">
-                                    <b class="text-info"> {{comment.username}} </b>
-                                </p>
-                                <p class="m-0"> {{comment.text}} </p>
-                                <p class="m-0"> {{comment.created_at}} </p>
+                            <div class="mt-5">
+                                <h5> <b> Comentários </b> </h5>
+                                <template v-if="comments && comments.length > 0">
+                                    <div v-for="comment in comments" :key="comment.id" class="mb-4 text-break"  style='font-size: 0.75em;'>
+                                        <p class="m-0">
+                                            <b class="text-info"> {{comment.username}} </b>
+                                        </p>
+                                        <p class="m-0"> {{comment.text}} </p>
+                                        <p class="m-0"> {{comment.created_at}} </p>
+                                    </div>
+                                </template>
+                                <template v-else>
+                                    <p> Nenhum comentário disponível. </p>
+                                </template>
                             </div>
-                        <!-- parte de por os comentarios -->
-                            <form class="comments" @submit.prevent="postComments">
-                                <p class="m-0"> <b class="m-0"> <label for="comment">Adicione um comentário:</label> </b> </p>
-                                <p class="m-0"> <textarea id="comment" v-model="new_comment" style="width:700px;"></textarea> </p>
-                                <p class="m-0"> <input type="submit" value="Enviar"> </p>
-                            </form>
+                            <div class="mt-5">
+                                <h5> <b> Adicione um comentário  </b> </h5>
+                                <b-textarea v-model="new_comment"></b-textarea>
+                                <b-button variant="dark" class="float-right my-2" @click="postComments"> Enviar </b-button>
+                            </div>
                         </b-col>
                         <b-col cols="2">
                             <h4> <b> Tweets recentes </b> </h4>
@@ -173,11 +180,6 @@ export default {
             new_comment: "",
             ISO6391: ISO6391,
             user_id: null,
-            analysis: {
-                sentiment: null,
-                heatmap: null,
-                wordcloud: null,
-            },
             overlay: false,
         }
     },
@@ -206,12 +208,9 @@ export default {
                 this.related = res.data.related;
                 this.is_favorite = res.data.is_favorite;
                 this.recent_tweets = res.data.recent_tweets;
-                this.generateComments();
-            }).catch(err => {
-                console.error(err)
-                throw err;
-            });
-            this.loaded = true;
+                this.refreshComments();
+                this.loaded = true;
+            }).catch(err => console.error(err));
         },
         setFavorite() {
             axios.put(this.backend + "/favorite", {
@@ -246,30 +245,24 @@ export default {
                 this.$utils.showError(this, 'Erro ao gerar análises.')
             });
         },
-        generateComments() {
+        refreshComments() {
             axios.get(this.backend + '/comments', {
                 params: {
-                    entity: this.info.id,
+                    tmdb_id: this.model.id,
                 }
             }).then(res => {
-                console.log(res);
-                console.log("aaaaaaaaaaaaaaaaaaaaaa");
-                this.comments = res.data.results;
-            }).then(err => {
-                console.error("err: " + err)
-                this.$utils.showError(this, 'Erro ao pegar comentários.')
-            });
+                this.comments = [];
+                res.data.results.forEach(e => this.comments.push(e));
+            }).catch(err => console.log(err));
         },
         postComments() {
             axios.post(this.backend + '/comments', {
+                entity: this.model,
                 user_id: this.user_id,
                 text: this.new_comment,
-                entity_id: this.info.id,
-            }).then(res => {
-                if (res.status === 200) {
-                    alert("comentário enviado com sucesso!")
-                }
-            });
+            }).then(() => {
+                this.refreshComments();}
+            ).catch(err => console.log(err));
         },
     },
 }

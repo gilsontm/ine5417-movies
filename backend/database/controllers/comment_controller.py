@@ -7,15 +7,12 @@ class CommentController:
     def __init__(self):
         connection.database.connect(reuse_if_open=True)
 
-    def get_by_entity_id(self, entity_id):
-        models = comment_model.get_by_entity_id(entity_id)
+    def get_by_tmdb_id(self, tmdb_id):
+        models = comment_model.get_by_tmdb_id(tmdb_id)
         if models is None:
             return []
-        dicts = [model for model in models]
+        dicts = [model.as_dict() for model in models]
         return dicts
 
-    def insert(self, comment,user_id,entity_id):
-        return comment_model.insert(comment,user_id,entity_id)
-
-    def remove(self, comment_id):
-        return comment_model.remove(comment_id)
+    def insert(self, text, user_id, entity_id):
+        return comment_model.insert(text, user_id, entity_id)
