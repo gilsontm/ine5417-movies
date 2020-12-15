@@ -52,6 +52,6 @@ Na pasta root do projeto, execute:
     python main.py
     [terminal ficará travado aqui]
 ```
-
 O servidor backend ficará ouvindo a porta 8888, esperando por requisições do servidor frontend.
+
 ==================================================================================
